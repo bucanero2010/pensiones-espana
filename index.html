@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Viabilidad de la Seguridad Social en España</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-red: #ef4444;
+            --accent-orange: #f97316;
+            --accent-yellow: #eab308;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --border-color: #334155;
+            --gradient-start: #1e293b;
+            --gradient-end: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ef4444, #f97316, #eab308);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .hero-stat {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-stat .number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .hero-stat .label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.3rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--text-secondary);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section {
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-number {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+            padding: 0.3rem 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            margin-top: 0.8rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 1rem auto 0;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            margin: 1.5rem auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-container canvas {
+            max-height: 400px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple), var(--accent-red));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.55rem;
+            top: 1.8rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            border: 3px solid var(--bg-primary);
+        }
+
+        .timeline-year {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            letter-spacing: 0.05em;
+        }
+
+        .timeline-item h4 {
+            font-size: 1.1rem;
+            margin: 0.3rem 0 0.5rem;
+        }
+
+        .timeline-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stat-highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 0.3rem;
+        }
+
+        .stat-highlight.green {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.2);
+            color: var(--accent-green);
+        }
+
+        .stat-highlight.blue {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .stat-highlight.orange {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: rgba(249, 115, 22, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .stat-highlight.red {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background: rgba(59, 130, 246, 0.15);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+        }
+
+        .comparison-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .equation-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .equation-box .equation {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .equation-box .equation-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .alert-box {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .alert-box .alert-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .alert-box p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .interactive-slider {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+        }
+
+        .slider-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .slider-group label span {
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border-color);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            border: 3px solid var(--bg-primary);
+        }
+
+        .simulator-result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .simulator-result .big-number {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-color), transparent);
+            margin: 3rem 0;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .nav-dot.active {
+            background: var(--accent-blue);
+            transform: scale(1.3);
+        }
+
+        .nav-dot:hover {
+            background: var(--accent-blue);
+        }
+
+        .pyramid-visual {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .pyramid {
+            text-align: center;
+        }
+
+        .pyramid h4 {
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+        }
+
+        .pyramid-bar {
+            display: flex;
+            justify-content: center;
+            margin: 2px 0;
+        }
+
+        .pyramid-bar .bar-left,
+        .pyramid-bar .bar-right {
+            height: 6px;
+            transition: width 0.5s;
+        }
+
+        .pyramid-bar .bar-left {
+            background: var(--accent-blue);
+            border-radius: 3px 0 0 3px;
+        }
+
+        .pyramid-bar .bar-right {
+            background: var(--accent-red);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .conclusion-section {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(249, 115, 22, 0.05));
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(239, 68, 68, 0.15);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-dots { display: none; }
+            .hero-stats { grid-template-columns: 1fr 1fr; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .section { padding: 3rem 0; }
+            .container { padding: 0 1rem; }
+            .card { padding: 1.5rem; }
+            .pyramid-visual { gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Dots -->
+    <nav class="nav-dots" id="navDots">
+        <button class="nav-dot active" data-section="hero" title="Inicio" aria-label="Ir a inicio"></button>
+        <button class="nav-dot" data-section="origenes" title="Orígenes" aria-label="Ir a orígenes"></button>
+        <button class="nav-dot" data-section="demografia" title="Demografía" aria-label="Ir a demografía"></button>
+        <button class="nav-dot" data-section="sistema" title="El Sistema" aria-label="Ir al sistema"></button>
+        <button class="nav-dot" data-section="crisis" title="Crisis" aria-label="Ir a crisis"></button>
+        <button class="nav-dot" data-section="babyboom" title="Baby Boom" aria-label="Ir a baby boom"></button>
+        <button class="nav-dot" data-section="simulador" title="Simulador" aria-label="Ir a simulador"></button>
+        <button class="nav-dot" data-section="futuro" title="Futuro" aria-label="Ir a futuro"></button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1>El Futuro de las Pensiones en España</h1>
+            <p>Un análisis interactivo sobre la viabilidad de la Seguridad Social española: cómo pasamos de un sistema sólido a un desafío estructural sin precedentes.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="number" style="color: var(--accent-red);">10,5M</span>
+                    <span class="label">Pensiones contributivas en 2026</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="number" style="color: var(--accent-orange);">14.336M€</span>
+                    <span class="label">Nómina mensual récord (abril 2026)</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="number" style="color: var(--accent-yellow);">2,32</span>
+                    <span class="label">Cotizantes por pensionista</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="number" style="color: var(--accent-green);">84 años</span>
+                    <span class="label">Esperanza de vida</span>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator" onclick="document.getElementById('origenes').scrollIntoView({behavior:'smooth'})">
+            <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+    </section>
+
+    <!-- SECTION 1: ORÍGENES -->
+    <section class="section" id="origenes">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">Capítulo 1</span>
+                <h2>Los Orígenes del Sistema</h2>
+                <p>De la beneficencia al estado del bienestar: cómo España construyó su red de protección social</p>
+            </div>
+
+            <div class="equation-box">
+                <div class="equation-desc">El principio fundamental del sistema de reparto</div>
+                <div class="equation">Cotizaciones de trabajadores activos → Pago de pensiones actuales</div>
+                <div class="equation-desc">Los trabajadores de hoy pagan las pensiones de los jubilados de hoy, con la promesa de que los trabajadores del mañana pagarán las suyas.</div>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="timeline-year">1900</span>
+                    <h4>Primeros pasos: el Instituto Nacional de Previsión</h4>
+                    <p>Se crea el INP en 1908, primer organismo público de previsión social en España. Ofrecía seguros voluntarios de vejez, una idea revolucionaria para la época. La esperanza de vida era de apenas 35 años.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">1919</span>
+                    <h4>Retiro Obrero Obligatorio</h4>
+                    <p>España establece el primer seguro social obligatorio de vejez. Cubría a trabajadores asalariados entre 16 y 65 años con una pensión de 1 peseta diaria. La edad de jubilación se fijó en 65 años, cuando la esperanza de vida rondaba los 42 años.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">1963</span>
+                    <h4>Ley de Bases de la Seguridad Social</h4>
+                    <p>Se establece el sistema moderno de Seguridad Social. Se pasa de un modelo de capitalización (cada uno ahorra para sí mismo) a un modelo de <strong>reparto</strong> (solidaridad intergeneracional). Con 30,5 millones de habitantes y una tasa de natalidad de 21,7‰, el sistema parecía inagotable.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">1967</span>
+                    <h4>Entrada en vigor del sistema actual</h4>
+                    <p>Se unifica la protección social en un sistema único. España vivía el desarrollismo económico: crecimiento del 7% anual, pleno empleo masculino y familias con 3-4 hijos de media. La proporción era de más de 4 trabajadores por cada jubilado.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">1978</span>
+                    <h4>La Constitución y el artículo 41</h4>
+                    <p>La Constitución española consagra el derecho a la Seguridad Social: <em>"Los poderes públicos mantendrán un régimen público de Seguridad Social para todos los ciudadanos que garantice la asistencia y prestaciones sociales suficientes."</em> Se eleva a derecho constitucional.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">1995</span>
+                    <h4>Pacto de Toledo</h4>
+                    <p>Acuerdo parlamentario para garantizar la sostenibilidad del sistema. Se crea el Fondo de Reserva de la Seguridad Social (la "hucha de las pensiones") y se separan las fuentes de financiación. En ese momento, el sistema tenía superávit.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: DEMOGRAFÍA -->
+    <section class="section" id="demografia">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">Capítulo 2</span>
+                <h2>La Revolución Demográfica</h2>
+                <p>Los tres factores que cambiaron las reglas del juego: natalidad, esperanza de vida y envejecimiento</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>📉 El desplome de la natalidad</h3>
+                    <p>España pasó de ser uno de los países más fecundos de Europa a tener una de las tasas de natalidad más bajas del mundo. En 2024, el índice de fecundidad fue de solo 1,1 hijos por mujer, muy por debajo del 2,1 necesario para el reemplazo generacional.</p>
+                    <div class="chart-container">
+                        <canvas id="chartNatalidad"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>📈 El triunfo de la longevidad</h3>
+                    <p>La esperanza de vida se ha incrementado en casi 15 años desde 1960. Esto es un logro extraordinario de la sanidad y la calidad de vida, pero significa que cada jubilado cobra pensión durante muchos más años de los previstos originalmente.</p>
+                    <div class="chart-container">
+                        <canvas id="chartEsperanza"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert-box">
+                <span class="alert-icon">⚠️</span>
+                <div>
+                    <p><strong>La paradoja del éxito:</strong> Cuando se diseñó el sistema en los años 60, la edad de jubilación era 65 años y la esperanza de vida era 69. Un jubilado cobraba pensión durante 4 años de media. Hoy, con una esperanza de vida de 84 años, cobra durante 19 años de media — casi 5 veces más.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3>👥 La inversión de la pirámide poblacional</h3>
+                <p>La estructura de edad de la población española se ha transformado radicalmente. Lo que era una pirámide con base ancha (muchos jóvenes, pocos mayores) se ha convertido en una estructura invertida.</p>
+                <div class="chart-container">
+                    <canvas id="chartPiramide"></canvas>
+                </div>
+                <div class="grid-3" style="margin-top: 1rem;">
+                    <div style="text-align: center;">
+                        <span class="stat-highlight green">1960</span>
+                        <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">27% menores de 15 años<br>8% mayores de 65</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <span class="stat-highlight orange">2000</span>
+                        <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">15% menores de 15 años<br>17% mayores de 65</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <span class="stat-highlight red">2025</span>
+                        <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">14% menores de 15 años<br>21% mayores de 65</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3>🌍 España en contexto europeo</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>País</th>
+                            <th>Tasa de fecundidad</th>
+                            <th>Esperanza de vida</th>
+                            <th>% Población &gt;65</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🇪🇸 España</td>
+                            <td style="color: var(--accent-red); font-weight: 700;">1,10</td>
+                            <td>84,0 años</td>
+                            <td>21%</td>
+                        </tr>
+                        <tr>
+                            <td>🇮🇹 Italia</td>
+                            <td style="color: var(--accent-red);">1,20</td>
+                            <td>83,8 años</td>
+                            <td>24%</td>
+                        </tr>
+                        <tr>
+                            <td>🇩🇪 Alemania</td>
+                            <td>1,35</td>
+                            <td>81,2 años</td>
+                            <td>22%</td>
+                        </tr>
+                        <tr>
+                            <td>🇫🇷 Francia</td>
+                            <td style="color: var(--accent-green);">1,68</td>
+                            <td>82,5 años</td>
+                            <td>21%</td>
+                        </tr>
+                        <tr>
+                            <td>🇸🇪 Suecia</td>
+                            <td>1,52</td>
+                            <td>83,2 años</td>
+                            <td>20%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: EL SISTEMA -->
+    <section class="section" id="sistema">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">Capítulo 3</span>
+                <h2>Anatomía del Sistema</h2>
+                <p>Cómo funciona la Seguridad Social española y por qué los números ya no cuadran</p>
+            </div>
+
+            <div class="card">
+                <h3>⚙️ El mecanismo de reparto</h3>
+                <p>El sistema español es de <strong>reparto</strong>: las cotizaciones de los trabajadores activos financian directamente las pensiones de los jubilados actuales. No es un sistema de ahorro individual. Esto funciona bien cuando hay muchos trabajadores por cada jubilado, pero se vuelve insostenible cuando la proporción se invierte.</p>
+                <div class="chart-container">
+                    <canvas id="chartRatio"></canvas>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>💰 Evolución del gasto en pensiones</h3>
+                    <p>El gasto en pensiones ha crecido de forma exponencial, pasando del 8% del PIB en los años 90 al 13,1% en 2023. Representa ya el 30% de todo el gasto público.</p>
+                    <div class="chart-container">
+                        <canvas id="chartGasto"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>📊 Pensión media vs. salario medio</h3>
+                    <p>La pensión media de jubilación ha alcanzado los 1.570€ mensuales en 2026. La tasa de sustitución (porcentaje del último salario que cubre la pensión) en España es de las más altas de Europa.</p>
+                    <div class="chart-container">
+                        <canvas id="chartPensionMedia"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🏦 La "hucha de las pensiones"</h3>
+                <p>El Fondo de Reserva de la Seguridad Social se creó en el año 2000 para guardar los excedentes del sistema en los años buenos. Llegó a acumular 66.815 millones de euros en 2011. Sin embargo, la crisis económica obligó a vaciarlo casi por completo para pagar las pensiones.</p>
+                <div class="chart-container">
+                    <canvas id="chartHucha"></canvas>
+                </div>
+                <div class="alert-box">
+                    <span class="alert-icon">🔴</span>
+                    <div>
+                        <p>El Fondo de Reserva pasó de 66.815 millones € en 2011 a apenas 2.150 millones € en 2023. Se consumió el 97% del fondo en poco más de una década. Actualmente el déficit se cubre con transferencias del Estado (impuestos generales).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: CRISIS -->
+    <section class="section" id="crisis">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">Capítulo 4</span>
+                <h2>Las Crisis y las Reformas</h2>
+                <p>Cada crisis económica ha puesto a prueba el sistema, forzando reformas que nunca han sido suficientes</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="timeline-year">2008-2013 · La Gran Recesión</span>
+                    <h4>El punto de inflexión</h4>
+                    <p>La crisis financiera destruyó 3,5 millones de empleos en España. El paro alcanzó el 27%. Menos cotizantes y más jubilaciones anticipadas crearon un déficit estructural. En 2010, por primera vez, el sistema pagó más de lo que ingresaba.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2011 · Reforma del PSOE</span>
+                    <h4>Retraso de la edad de jubilación</h4>
+                    <p>Se eleva progresivamente la edad de jubilación de 65 a 67 años (completada en 2027). Se amplía el período de cálculo de la pensión de 15 a 25 años. Se exigen 38,5 años cotizados para jubilarse a los 65.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2013 · Reforma del PP</span>
+                    <h4>Factor de sostenibilidad e Índice de Revalorización</h4>
+                    <p>Se introduce un factor de sostenibilidad que vincula la pensión inicial a la esperanza de vida, y un índice de revalorización que sustituye la actualización con el IPC por una fórmula que limita las subidas al 0,25% anual. Esta medida fue muy impopular y se derogó parcialmente en 2018.</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-year">2021-2023 · Reforma de Escrivá</span>
+                    <h4>La última gran reforma</h4>
+                    <p>Se vuelve a vincular las pensiones al IPC (garantizando poder adquisitivo). Se crea el Mecanismo de Equidad Intergeneracional (MEI): una cotización adicional del 0,6% (creciente hasta el 1,2% en 2029). Se amplía el período de cálculo a los últimos 29 años (desde 2044). Se aumentan las cotizaciones máximas. Según Fedea, esta reforma podría elevar el gasto al 18% del PIB.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Déficit del sistema de pensiones</h3>
+                <p>Desde 2010, el sistema de la Seguridad Social ha sido deficitario de forma estructural. La diferencia entre ingresos por cotizaciones y gastos en prestaciones se cubre con transferencias del Estado.</p>
+                <div class="chart-container">
+                    <canvas id="chartDeficit"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: BABY BOOM -->
+    <section class="section" id="babyboom">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">Capítulo 5</span>
+                <h2>La Ola del Baby Boom</h2>
+                <p>La generación más numerosa de la historia de España empieza a jubilarse: el tsunami demográfico que lo cambiará todo</p>
+            </div>
+
+            <div class="card">
+                <h3>👶 La generación del baby boom español (1958-1977)</h3>
+                <p>Entre 1958 y 1977 nacieron en España cerca de <strong>14 millones de personas</strong>, con más de 650.000 nacimientos anuales, rozando los 700.000 en los años pico. Esto fue 2,5 millones más que en los 20 años anteriores y 4,5 millones más que en los 20 años siguientes.</p>
+                <div class="chart-container">
+                    <canvas id="chartBabyBoom"></canvas>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>🕐 El calendario de jubilaciones</h3>
+                    <p>Los primeros baby boomers (nacidos en 1958) empezaron a jubilarse en 2023-2025. El pico de jubilaciones se producirá entre 2030 y 2045. En 2024, las nuevas altas de jubilación crecieron un 35%.</p>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Nacidos</th>
+                                <th>Se jubilan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1958-1962</td><td>~3,3M</td><td>2025-2029</td></tr>
+                            <tr><td>1963-1967</td><td>~3,4M</td><td>2030-2034</td></tr>
+                            <tr><td>1968-1972</td><td>~3,4M</td><td>2035-2039</td></tr>
+                            <tr><td>1973-1977</td><td>~3,5M</td><td>2040-2044</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3>📊 El impacto en números</h3>
+                    <p>Las proyecciones muestran un escenario preocupante para las próximas décadas:</p>
+                    <div style="margin-top: 1rem;">
+                        <div class="stat-highlight blue" style="display: block; margin-bottom: 0.8rem;">
+                            📌 2025: ~10,5 millones de pensiones
+                        </div>
+                        <div class="stat-highlight orange" style="display: block; margin-bottom: 0.8rem;">
+                            📌 2035: ~13 millones de pensiones (estimado)
+                        </div>
+                        <div class="stat-highlight red" style="display: block; margin-bottom: 0.8rem;">
+                            📌 2050: ~15 millones de pensiones (estimado)
+                        </div>
+                        <div class="stat-highlight red" style="display: block; margin-bottom: 0.8rem;">
+                            📌 Ratio en 2050: 1,6 cotizantes por pensionista
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem;">La tasa de dependencia (población mayor de 64 respecto a la población en edad de trabajar) pasará del 33% actual al 57% en 2050.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔮 Proyección de cotizantes por pensionista</h3>
+                <div class="chart-container">
+                    <canvas id="chartProyeccion"></canvas>
+                </div>
+                <div class="alert-box">
+                    <span class="alert-icon">💡</span>
+                    <div>
+                        <p><strong>¿Cuántos cotizantes se necesitan?</strong> Los expertos estiman que se necesitan al menos 2,5 cotizantes por pensionista para que el sistema sea sostenible sin aportaciones externas. Con las proyecciones actuales, en 2050 habrá solo 1,6 — un 36% por debajo del mínimo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: SIMULADOR -->
+    <section class="section" id="simulador">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">Capítulo 6</span>
+                <h2>Simulador Interactivo</h2>
+                <p>Experimenta con los parámetros del sistema para entender qué combinaciones lo hacen viable</p>
+            </div>
+
+            <div class="interactive-slider">
+                <h3 style="margin-bottom: 1.5rem;">🎛️ Ajusta los parámetros del sistema</h3>
+
+                <div class="slider-group">
+                    <label>Edad de jubilación: <span id="valEdad">67</span> años</label>
+                    <input type="range" id="sliderEdad" min="62" max="75" value="67" oninput="updateSimulator()">
+                </div>
+
+                <div class="slider-group">
+                    <label>Tasa de fecundidad: <span id="valFecundidad">1.1</span> hijos/mujer</label>
+                    <input type="range" id="sliderFecundidad" min="0.8" max="2.5" step="0.1" value="1.1" oninput="updateSimulator()">
+                </div>
+
+                <div class="slider-group">
+                    <label>Inmigración neta anual: <span id="valInmigracion">300.000</span></label>
+                    <input type="range" id="sliderInmigracion" min="0" max="800000" step="50000" value="300000" oninput="updateSimulator()">
+                </div>
+
+                <div class="slider-group">
+                    <label>Tasa de empleo (16-67 años): <span id="valEmpleo">65</span>%</label>
+                    <input type="range" id="sliderEmpleo" min="50" max="85" value="65" oninput="updateSimulator()">
+                </div>
+
+                <div class="slider-group">
+                    <label>Cotización sobre salario: <span id="valCotizacion">28.3</span>%</label>
+                    <input type="range" id="sliderCotizacion" min="20" max="40" step="0.5" value="28.3" oninput="updateSimulator()">
+                </div>
+
+                <div class="simulator-result">
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Ratio cotizantes/pensionista estimado en 2050</p>
+                    <div class="big-number" id="simRatio" style="color: var(--accent-red);">1.6</div>
+                    <p id="simVerdict" style="margin-top: 0.5rem; font-weight: 600; color: var(--accent-red);">⚠️ Sistema en riesgo de insostenibilidad</p>
+                    <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Pensionistas estimados</p>
+                            <p id="simPensionistas" style="font-size: 1.3rem; font-weight: 700;">15.0M</p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem;">Cotizantes estimados</p>
+                            <p id="simCotizantes" style="font-size: 1.3rem; font-weight: 700;">24.0M</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🧮 ¿Qué haría falta para equilibrar el sistema?</h3>
+                <p>Según distintos escenarios, estas son las combinaciones que podrían hacer viable el sistema sin aportaciones externas:</p>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Escenario</th>
+                            <th>Edad jubilación</th>
+                            <th>Cotización</th>
+                            <th>Inmigración</th>
+                            <th>Viabilidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Actual</td>
+                            <td>67</td>
+                            <td>28,3%</td>
+                            <td>300K/año</td>
+                            <td style="color: var(--accent-red);">❌ Déficit</td>
+                        </tr>
+                        <tr>
+                            <td>Reforma moderada</td>
+                            <td>69</td>
+                            <td>30%</td>
+                            <td>400K/año</td>
+                            <td style="color: var(--accent-orange);">⚠️ Ajustado</td>
+                        </tr>
+                        <tr>
+                            <td>Reforma ambiciosa</td>
+                            <td>70</td>
+                            <td>32%</td>
+                            <td>500K/año</td>
+                            <td style="color: var(--accent-yellow);">🟡 Viable</td>
+                        </tr>
+                        <tr>
+                            <td>Escenario nórdico</td>
+                            <td>68</td>
+                            <td>35%</td>
+                            <td>400K/año</td>
+                            <td style="color: var(--accent-green);">✅ Sostenible</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: FUTURO -->
+    <section class="section" id="futuro">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">Capítulo 7</span>
+                <h2>¿Qué Nos Espera?</h2>
+                <p>Las opciones sobre la mesa y los dilemas que la sociedad española deberá afrontar</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card" style="border-top: 3px solid var(--accent-blue);">
+                    <h3>💼 Más ingresos</h3>
+                    <p><strong>Subir cotizaciones:</strong> El MEI ya añade un 0,6% (llegará al 1,2%). Pero subir más las cotizaciones encarece el empleo y puede destruir puestos de trabajo.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Ampliar bases máximas:</strong> Que los salarios altos coticen más. Ya se está haciendo progresivamente hasta 2050.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Impuestos finalistas:</strong> Financiar parte de las pensiones con impuestos generales (IVA, IRPF, etc.).</p>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--accent-orange);">
+                    <h3>✂️ Menos gastos</h3>
+                    <p><strong>Retrasar la jubilación:</strong> Cada año de retraso reduce el gasto y aumenta los ingresos. Pero hay trabajos que no se pueden hacer a los 70.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Reducir la tasa de sustitución:</strong> Que la pensión sea un porcentaje menor del último salario. España tiene una de las más altas de la OCDE (~80%).</p>
+                    <p style="margin-top: 0.5rem;"><strong>Ampliar el período de cálculo:</strong> Ya se está ampliando de 25 a 29 años, lo que reduce la pensión media.</p>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--accent-green);">
+                    <h3>🔄 Cambios estructurales</h3>
+                    <p><strong>Inmigración:</strong> Más trabajadores jóvenes que coticen. España necesitaría entre 300.000-500.000 inmigrantes netos anuales.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Natalidad:</strong> Políticas de conciliación, ayudas a familias. Pero los efectos tardan 20-25 años en notarse.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Productividad:</strong> Salarios más altos generan más cotizaciones. La digitalización y la IA podrían ayudar.</p>
+                </div>
+            </div>
+
+            <div class="conclusion-section">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">🎯 El dilema central</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="color: var(--accent-red); margin-bottom: 0.5rem;">Lo que sabemos</h4>
+                        <ul style="color: var(--text-secondary); padding-left: 1.2rem; font-size: 0.95rem;">
+                            <li>El sistema de reparto actual no es viable a largo plazo sin cambios profundos</li>
+                            <li>La generación del baby boom empezará a jubilarse masivamente a partir de 2025-2030</li>
+                            <li>El gasto en pensiones podría alcanzar el 17-18% del PIB en 2050</li>
+                            <li>La ratio cotizantes/pensionista caerá por debajo de 2 en la próxima década</li>
+                            <li>El Fondo de Reserva está prácticamente agotado</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-green); margin-bottom: 0.5rem;">Lo que podemos hacer</h4>
+                        <ul style="color: var(--text-secondary); padding-left: 1.2rem; font-size: 0.95rem;">
+                            <li>No existe una solución única: se necesita una combinación de medidas</li>
+                            <li>Complementar el sistema público con ahorro privado (planes de pensiones de empresa)</li>
+                            <li>Adaptar la edad de jubilación a la esperanza de vida</li>
+                            <li>Políticas activas de empleo, natalidad e inmigración</li>
+                            <li>Mayor transparencia: que cada ciudadano conozca su pensión estimada</li>
+                        </ul>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 2rem; color: var(--text-secondary); font-style: italic; font-size: 1.05rem;">
+                    "El problema no es si habrá pensiones, sino cuánto cubrirán y quién pagará la diferencia."
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>📅 Proyección del gasto en pensiones (% del PIB)</h3>
+                <div class="chart-container">
+                    <canvas id="chartFuturo"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 0.5rem;">Datos recopilados de fuentes públicas: Seguridad Social, INE, Eurostat, BBVA Research, Fedea, IESE, AIReF.</p>
+            <p>Las proyecciones futuras son estimaciones basadas en tendencias demográficas actuales y pueden variar según políticas adoptadas.</p>
+            <p style="margin-top: 1rem;">Creado en mayo de 2026 · <a href="https://www.seg-social.es" target="_blank" rel="noopener">Seguridad Social</a> · <a href="https://www.ine.es" target="_blank" rel="noopener">INE</a> · <a href="https://ec.europa.eu/eurostat" target="_blank" rel="noopener">Eurostat</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // CHART DEFAULTS
+        // ============================================
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = 'rgba(51, 65, 85, 0.5)';
+        Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+
+        const gridColor = 'rgba(51, 65, 85, 0.4)';
+
+        // ============================================
+        // CHART 1: NATALIDAD
+        // ============================================
+        new Chart(document.getElementById('chartNatalidad'), {
+            type: 'line',
+            data: {
+                labels: ['1960', '1965', '1970', '1975', '1980', '1985', '1990', '1995', '2000', '2005', '2010', '2015', '2020', '2024'],
+                datasets: [{
+                    label: 'Tasa de natalidad (‰)',
+                    data: [21.7, 21.1, 19.6, 18.8, 15.2, 11.9, 10.3, 9.2, 9.9, 10.7, 10.5, 9.0, 7.2, 6.5],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    borderWidth: 3
+                }, {
+                    label: 'Hijos por mujer',
+                    data: [2.86, 2.94, 2.88, 2.80, 2.20, 1.64, 1.36, 1.17, 1.23, 1.35, 1.37, 1.33, 1.19, 1.10],
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.05)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    borderWidth: 2,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top' },
+                    annotation: {
+                        annotations: {
+                            reemplazo: {
+                                type: 'line',
+                                yMin: 2.1, yMax: 2.1,
+                                yScaleID: 'y1',
+                                borderColor: 'rgba(234, 179, 8, 0.6)',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                                label: {
+                                    display: true,
+                                    content: 'Tasa de reemplazo (2,1)',
+                                    position: 'start',
+                                    backgroundColor: 'rgba(234, 179, 8, 0.8)',
+                                    font: { size: 11 }
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { title: { display: true, text: 'Nacimientos por 1.000 hab.' }, grid: { color: gridColor } },
+                    y1: { position: 'right', title: { display: true, text: 'Hijos por mujer' }, grid: { drawOnChartArea: false }, min: 0, max: 3.5 },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 2: ESPERANZA DE VIDA
+        // ============================================
+        new Chart(document.getElementById('chartEsperanza'), {
+            type: 'line',
+            data: {
+                labels: ['1960', '1965', '1970', '1975', '1980', '1985', '1990', '1995', '2000', '2005', '2010', '2015', '2020', '2024'],
+                datasets: [{
+                    label: 'Esperanza de vida (años)',
+                    data: [69.1, 71.0, 72.4, 73.5, 75.6, 76.9, 77.0, 78.1, 79.4, 80.3, 82.2, 83.0, 82.4, 84.0],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    borderWidth: 3
+                }, {
+                    label: 'Años de jubilación esperados',
+                    data: [4.1, 6.0, 7.4, 8.5, 10.6, 11.9, 12.0, 13.1, 14.4, 15.3, 17.2, 18.0, 17.4, 19.0],
+                    borderColor: '#a855f7',
+                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    borderWidth: 2,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top' },
+                    annotation: {
+                        annotations: {
+                            jubilacion: {
+                                type: 'line',
+                                yMin: 65, yMax: 65,
+                                borderColor: 'rgba(249, 115, 22, 0.6)',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                                label: {
+                                    display: true,
+                                    content: 'Edad jubilación (65)',
+                                    position: 'start',
+                                    backgroundColor: 'rgba(249, 115, 22, 0.8)',
+                                    font: { size: 11 }
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { min: 60, max: 90, title: { display: true, text: 'Esperanza de vida (años)' }, grid: { color: gridColor } },
+                    y1: { position: 'right', title: { display: true, text: 'Años cobrando pensión' }, grid: { drawOnChartArea: false }, min: 0, max: 25 },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 3: PIRÁMIDE POBLACIONAL
+        // ============================================
+        new Chart(document.getElementById('chartPiramide'), {
+            type: 'bar',
+            data: {
+                labels: ['0-14 años', '15-29 años', '30-44 años', '45-64 años', '65-79 años', '80+ años'],
+                datasets: [{
+                    label: '1960',
+                    data: [27.4, 20.5, 19.8, 20.5, 9.2, 2.6],
+                    backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                    borderColor: '#22c55e',
+                    borderWidth: 1
+                }, {
+                    label: '1990',
+                    data: [19.4, 22.3, 20.1, 20.8, 12.8, 4.6],
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                    borderColor: '#3b82f6',
+                    borderWidth: 1
+                }, {
+                    label: '2025',
+                    data: [14.0, 14.8, 20.5, 25.2, 16.5, 9.0],
+                    backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                    borderColor: '#ef4444',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                    y: { title: { display: true, text: '% de la población' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 4: RATIO COTIZANTES/PENSIONISTA
+        // ============================================
+        new Chart(document.getElementById('chartRatio'), {
+            type: 'line',
+            data: {
+                labels: ['1970', '1975', '1980', '1985', '1990', '1995', '2000', '2005', '2008', '2010', '2013', '2015', '2018', '2020', '2022', '2024', '2026'],
+                datasets: [{
+                    label: 'Cotizantes por pensionista',
+                    data: [4.2, 3.8, 3.5, 3.0, 2.8, 2.6, 2.50, 2.55, 2.53, 2.38, 2.29, 2.30, 2.35, 2.28, 2.34, 2.38, 2.32],
+                    borderColor: '#3b82f6',
+                    backgroundColor: function(context) {
+                        const chart = context.chart;
+                        const {ctx, chartArea} = chart;
+                        if (!chartArea) return null;
+                        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                        gradient.addColorStop(0, 'rgba(239, 68, 68, 0.3)');
+                        gradient.addColorStop(0.5, 'rgba(249, 115, 22, 0.2)');
+                        gradient.addColorStop(1, 'rgba(34, 197, 94, 0.1)');
+                        return gradient;
+                    },
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    borderWidth: 3,
+                    pointBackgroundColor: function(context) {
+                        const value = context.raw;
+                        if (value >= 3) return '#22c55e';
+                        if (value >= 2.5) return '#eab308';
+                        return '#ef4444';
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    annotation: {
+                        annotations: {
+                            sostenible: {
+                                type: 'line',
+                                yMin: 2.5, yMax: 2.5,
+                                borderColor: 'rgba(234, 179, 8, 0.7)',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                                label: {
+                                    display: true,
+                                    content: 'Umbral de sostenibilidad (2,5)',
+                                    position: 'end',
+                                    backgroundColor: 'rgba(234, 179, 8, 0.8)',
+                                    font: { size: 11 }
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { min: 1.5, max: 5, title: { display: true, text: 'Cotizantes por pensionista' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 5: GASTO EN PENSIONES (% PIB)
+        // ============================================
+        new Chart(document.getElementById('chartGasto'), {
+            type: 'bar',
+            data: {
+                labels: ['1995', '2000', '2005', '2008', '2010', '2012', '2015', '2018', '2020', '2022', '2023', '2025'],
+                datasets: [{
+                    label: 'Gasto en pensiones (% PIB)',
+                    data: [8.6, 8.4, 8.1, 8.3, 9.8, 10.5, 11.2, 11.0, 12.8, 12.2, 13.1, 13.5],
+                    backgroundColor: function(context) {
+                        const value = context.raw;
+                        if (value >= 13) return 'rgba(239, 68, 68, 0.7)';
+                        if (value >= 11) return 'rgba(249, 115, 22, 0.7)';
+                        if (value >= 9) return 'rgba(234, 179, 8, 0.7)';
+                        return 'rgba(34, 197, 94, 0.7)';
+                    },
+                    borderColor: function(context) {
+                        const value = context.raw;
+                        if (value >= 13) return '#ef4444';
+                        if (value >= 11) return '#f97316';
+                        if (value >= 9) return '#eab308';
+                        return '#22c55e';
+                    },
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { min: 6, max: 16, title: { display: true, text: '% del PIB' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 6: PENSIÓN MEDIA
+        // ============================================
+        new Chart(document.getElementById('chartPensionMedia'), {
+            type: 'line',
+            data: {
+                labels: ['2005', '2008', '2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024', '2026'],
+                datasets: [{
+                    label: 'Pensión media jubilación (€/mes)',
+                    data: [724, 814, 884, 946, 1.000, 1.043, 1.091, 1.162, 1.254, 1.440, 1.570],
+                    borderColor: '#a855f7',
+                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    borderWidth: 3
+                }, {
+                    label: 'Salario medio (€/mes)',
+                    data: [1.550, 1.750, 1.800, 1.850, 1.870, 1.900, 1.944, 2.000, 2.086, 2.250, 2.400],
+                    borderColor: '#06b6d4',
+                    backgroundColor: 'rgba(6, 182, 212, 0.05)',
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    borderWidth: 2,
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { legend: { position: 'top' } },
+                scales: {
+                    y: { title: { display: true, text: '€ / mes' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 7: FONDO DE RESERVA
+        // ============================================
+        new Chart(document.getElementById('chartHucha'), {
+            type: 'bar',
+            data: {
+                labels: ['2000', '2002', '2004', '2006', '2008', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'],
+                datasets: [{
+                    label: 'Fondo de Reserva (miles de millones €)',
+                    data: [0.6, 6.0, 15.7, 33.0, 50.4, 64.4, 66.8, 63.0, 53.7, 41.6, 32.5, 15.9, 8.1, 5.0, 2.2, 2.1, 2.1, 2.1, 2.15],
+                    backgroundColor: function(context) {
+                        const value = context.raw;
+                        if (value >= 50) return 'rgba(34, 197, 94, 0.7)';
+                        if (value >= 30) return 'rgba(234, 179, 8, 0.7)';
+                        if (value >= 10) return 'rgba(249, 115, 22, 0.7)';
+                        return 'rgba(239, 68, 68, 0.7)';
+                    },
+                    borderColor: function(context) {
+                        const value = context.raw;
+                        if (value >= 50) return '#22c55e';
+                        if (value >= 30) return '#eab308';
+                        if (value >= 10) return '#f97316';
+                        return '#ef4444';
+                    },
+                    borderWidth: 2,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { title: { display: true, text: 'Miles de millones €' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 8: DÉFICIT
+        // ============================================
+        new Chart(document.getElementById('chartDeficit'), {
+            type: 'bar',
+            data: {
+                labels: ['2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+                datasets: [{
+                    label: 'Saldo del sistema (miles de millones €)',
+                    data: [8.0, 2.0, -2.4, -3.8, -10.1, -11.5, -12.5, -16.7, -18.4, -18.8, -18.3, -16.8, -24.0, -20.5, -16.0, -14.5, -12.0, -10.5],
+                    backgroundColor: function(context) {
+                        return context.raw >= 0 ? 'rgba(34, 197, 94, 0.7)' : 'rgba(239, 68, 68, 0.7)';
+                    },
+                    borderColor: function(context) {
+                        return context.raw >= 0 ? '#22c55e' : '#ef4444';
+                    },
+                    borderWidth: 2,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    annotation: {
+                        annotations: {
+                            zero: {
+                                type: 'line',
+                                yMin: 0, yMax: 0,
+                                borderColor: 'rgba(148, 163, 184, 0.5)',
+                                borderWidth: 2
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { title: { display: true, text: 'Miles de millones €' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 9: BABY BOOM - NACIMIENTOS
+        // ============================================
+        new Chart(document.getElementById('chartBabyBoom'), {
+            type: 'bar',
+            data: {
+                labels: ['1950','1952','1954','1956','1958','1960','1962','1964','1966','1968','1970','1972','1974','1976','1978','1980','1982','1984','1986','1988','1990','1992','1994','1996','1998','2000'],
+                datasets: [{
+                    label: 'Nacimientos (miles)',
+                    data: [559,568,574,596,620,654,645,670,662,659,656,665,682,677,636,571,516,473,438,418,401,396,370,362,361,397],
+                    backgroundColor: function(context) {
+                        const index = context.dataIndex;
+                        const labels = context.chart.data.labels;
+                        const year = parseInt(labels[index]);
+                        if (year >= 1958 && year <= 1977) return 'rgba(249, 115, 22, 0.8)';
+                        return 'rgba(59, 130, 246, 0.5)';
+                    },
+                    borderColor: function(context) {
+                        const index = context.dataIndex;
+                        const labels = context.chart.data.labels;
+                        const year = parseInt(labels[index]);
+                        if (year >= 1958 && year <= 1977) return '#f97316';
+                        return '#3b82f6';
+                    },
+                    borderWidth: 1,
+                    borderRadius: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    annotation: {
+                        annotations: {
+                            bbStart: {
+                                type: 'box',
+                                xMin: '1958', xMax: '1978',
+                                backgroundColor: 'rgba(249, 115, 22, 0.05)',
+                                borderColor: 'rgba(249, 115, 22, 0.3)',
+                                borderWidth: 1,
+                                label: {
+                                    display: true,
+                                    content: 'BABY BOOM',
+                                    position: { x: 'center', y: 'start' },
+                                    color: '#f97316',
+                                    font: { size: 14, weight: 'bold' }
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { title: { display: true, text: 'Miles de nacimientos' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor }, ticks: { maxRotation: 45 } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 10: PROYECCIÓN COTIZANTES/PENSIONISTA
+        // ============================================
+        new Chart(document.getElementById('chartProyeccion'), {
+            type: 'line',
+            data: {
+                labels: ['2010', '2015', '2020', '2025', '2030', '2035', '2040', '2045', '2050'],
+                datasets: [{
+                    label: 'Ratio cotizantes/pensionista (real)',
+                    data: [2.38, 2.30, 2.28, 2.32, null, null, null, null, null],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    borderWidth: 3
+                }, {
+                    label: 'Proyección (escenario base)',
+                    data: [null, null, null, 2.32, 2.10, 1.90, 1.75, 1.65, 1.60],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    borderWidth: 3,
+                    borderDash: [8, 4]
+                }, {
+                    label: 'Proyección (escenario optimista)',
+                    data: [null, null, null, 2.32, 2.20, 2.10, 2.00, 1.95, 1.90],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    borderWidth: 2,
+                    borderDash: [4, 4]
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top' },
+                    annotation: {
+                        annotations: {
+                            sostenible: {
+                                type: 'line',
+                                yMin: 2.5, yMax: 2.5,
+                                borderColor: 'rgba(234, 179, 8, 0.5)',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                                label: {
+                                    display: true,
+                                    content: 'Umbral sostenibilidad',
+                                    position: 'start',
+                                    backgroundColor: 'rgba(234, 179, 8, 0.7)',
+                                    font: { size: 10 }
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { min: 1, max: 3, title: { display: true, text: 'Cotizantes por pensionista' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // CHART 11: PROYECCIÓN GASTO FUTURO
+        // ============================================
+        new Chart(document.getElementById('chartFuturo'), {
+            type: 'line',
+            data: {
+                labels: ['2020', '2025', '2030', '2035', '2040', '2045', '2050', '2055', '2060', '2065', '2070'],
+                datasets: [{
+                    label: 'Escenario sin reformas adicionales',
+                    data: [12.8, 13.5, 14.5, 15.5, 16.5, 17.2, 17.8, 17.5, 16.8, 15.5, 14.5],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    borderWidth: 3
+                }, {
+                    label: 'Escenario con reformas moderadas',
+                    data: [12.8, 13.5, 14.0, 14.8, 15.3, 15.5, 15.5, 15.0, 14.5, 13.8, 13.0],
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.05)',
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    borderWidth: 2,
+                    borderDash: [5, 5]
+                }, {
+                    label: 'Escenario con reformas profundas',
+                    data: [12.8, 13.2, 13.5, 13.8, 14.0, 14.0, 13.8, 13.5, 13.0, 12.5, 12.0],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    borderWidth: 2,
+                    borderDash: [3, 3]
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top' },
+                    annotation: {
+                        annotations: {
+                            pico: {
+                                type: 'box',
+                                xMin: '2040', xMax: '2055',
+                                backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                                borderColor: 'rgba(239, 68, 68, 0.2)',
+                                borderWidth: 1,
+                                label: {
+                                    display: true,
+                                    content: 'Pico baby boom',
+                                    position: { x: 'center', y: 'start' },
+                                    color: '#ef4444',
+                                    font: { size: 11 }
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { min: 10, max: 20, title: { display: true, text: '% del PIB' }, grid: { color: gridColor } },
+                    x: { grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ============================================
+        // SIMULATOR
+        // ============================================
+        function updateSimulator() {
+            const edad = parseInt(document.getElementById('sliderEdad').value);
+            const fecundidad = parseFloat(document.getElementById('sliderFecundidad').value);
+            const inmigracion = parseInt(document.getElementById('sliderInmigracion').value);
+            const empleo = parseInt(document.getElementById('sliderEmpleo').value);
+            const cotizacion = parseFloat(document.getElementById('sliderCotizacion').value);
+
+            document.getElementById('valEdad').textContent = edad;
+            document.getElementById('valFecundidad').textContent = fecundidad.toFixed(1);
+            document.getElementById('valInmigracion').textContent = inmigracion.toLocaleString('es-ES');
+            document.getElementById('valEmpleo').textContent = empleo;
+            document.getElementById('valCotizacion').textContent = cotizacion.toFixed(1);
+
+            // Simplified model for 2050 projection
+            // Base population 2050: ~48M (current) adjusted by fertility and immigration
+            const yearsToProject = 24; // 2026 to 2050
+            const additionalPopFromImmigration = inmigracion * yearsToProject;
+            const basePop2050 = 48_000_000 + additionalPopFromImmigration;
+
+            // Fertility effect on working-age population (delayed 20 years, partial effect by 2050)
+            const fertilityFactor = fecundidad / 1.1; // relative to current
+            const fertilityBonus = (fertilityFactor - 1) * 0.15; // small effect by 2050
+
+            // Working age population (16 to retirement age)
+            const workingAgeShare = 0.55 + (edad - 67) * 0.012 + fertilityBonus;
+            const workingAgePop = basePop2050 * Math.min(workingAgeShare, 0.68);
+            const cotizantes = workingAgePop * (empleo / 100);
+
+            // Pensioners: base ~15M adjusted by retirement age
+            const basePensionistas = 15_000_000 - (edad - 67) * 600_000;
+            const pensionistas = Math.max(basePensionistas, 8_000_000);
+
+            const ratio = cotizantes / pensionistas;
+
+            document.getElementById('simRatio').textContent = ratio.toFixed(2);
+            document.getElementById('simPensionistas').textContent = (pensionistas / 1_000_000).toFixed(1) + 'M';
+            document.getElementById('simCotizantes').textContent = (cotizantes / 1_000_000).toFixed(1) + 'M';
+
+            const ratioEl = document.getElementById('simRatio');
+            const verdictEl = document.getElementById('simVerdict');
+
+            if (ratio >= 2.5) {
+                ratioEl.style.color = '#22c55e';
+                verdictEl.style.color = '#22c55e';
+                verdictEl.textContent = '✅ Sistema sostenible';
+            } else if (ratio >= 2.0) {
+                ratioEl.style.color = '#eab308';
+                verdictEl.style.color = '#eab308';
+                verdictEl.textContent = '🟡 Sistema ajustado, necesita complementos';
+            } else if (ratio >= 1.8) {
+                ratioEl.style.color = '#f97316';
+                verdictEl.style.color = '#f97316';
+                verdictEl.textContent = '⚠️ Sistema en tensión, reformas necesarias';
+            } else {
+                ratioEl.style.color = '#ef4444';
+                verdictEl.style.color = '#ef4444';
+                verdictEl.textContent = '🔴 Sistema en riesgo de insostenibilidad';
+            }
+        }
+
+        // Initialize simulator
+        updateSimulator();
+
+        // ============================================
+        // NAVIGATION DOTS
+        // ============================================
+        const sections = ['hero', 'origenes', 'demografia', 'sistema', 'crisis', 'babyboom', 'simulador', 'futuro'];
+        const dots = document.querySelectorAll('.nav-dot');
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const sectionId = dot.dataset.section;
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    dots.forEach(d => d.classList.remove('active'));
+                    const activeDot = document.querySelector(`.nav-dot[data-section="${entry.target.id}"]`);
+                    if (activeDot) activeDot.classList.add('active');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        sections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        });
+    </script>
+</body>
+</html>
