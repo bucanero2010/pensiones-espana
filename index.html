@@ -561,8 +561,10 @@
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
             .section { padding: 3rem 0; }
             .container { padding: 0 1rem; }
-            .card { padding: 1.5rem; }
+            .card { padding: 1.2rem; }
             .pyramid-visual { gap: 1.5rem; }
+            .chart-container { padding: 0.8rem 0.5rem; }
+            .chart-container canvas { max-height: 300px; }
         }
     </style>
 </head>
@@ -789,7 +791,7 @@
                 </div>
                 <div class="card">
                     <h3>📊 Pensión media vs. salario medio</h3>
-                    <p>La pensión media de jubilación ha alcanzado los 1.570€ mensuales en 2026. La tasa de sustitución (porcentaje del último salario que cubre la pensión) en España es de las más altas de Europa.</p>
+                    <p>La pensión media de jubilación ha alcanzado los 1.570€ mensuales en 2026, mientras que el salario medio bruto es de unos 2.500€. La tasa de sustitución (porcentaje del salario que cubre la pensión) en España ronda el 80%, de las más altas de la OCDE.</p>
                     <div class="chart-container">
                         <canvas id="chartPensionMedia"></canvas>
                     </div>
@@ -1118,38 +1120,49 @@
         // ============================================
         // CHART 1: NATALIDAD
         // ============================================
+        const isMobile = window.innerWidth < 768;
+
         new Chart(document.getElementById('chartNatalidad'), {
             type: 'line',
             data: {
                 labels: ['1960', '1965', '1970', '1975', '1980', '1985', '1990', '1995', '2000', '2005', '2010', '2015', '2020', '2024'],
                 datasets: [{
-                    label: 'Tasa de natalidad (‰)',
+                    label: isMobile ? 'Natalidad (‰)' : 'Tasa de natalidad (‰)',
                     data: [21.7, 21.1, 19.6, 18.8, 15.2, 11.9, 10.3, 9.2, 9.9, 10.7, 10.5, 9.0, 7.2, 6.5],
                     borderColor: '#ef4444',
                     backgroundColor: 'rgba(239, 68, 68, 0.1)',
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    borderWidth: 3
+                    pointRadius: isMobile ? 3 : 5,
+                    pointHoverRadius: isMobile ? 5 : 8,
+                    borderWidth: isMobile ? 2 : 3
                 }, {
-                    label: 'Hijos por mujer',
+                    label: 'Hijos/mujer',
                     data: [2.86, 2.94, 2.88, 2.80, 2.20, 1.64, 1.36, 1.17, 1.23, 1.35, 1.37, 1.33, 1.19, 1.10],
                     borderColor: '#f97316',
                     backgroundColor: 'rgba(249, 115, 22, 0.05)',
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 4,
-                    pointHoverRadius: 7,
+                    pointRadius: isMobile ? 2 : 4,
+                    pointHoverRadius: isMobile ? 4 : 7,
                     borderWidth: 2,
                     yAxisID: 'y1'
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: isMobile ? 1.2 : 2,
                 interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: { position: 'top' },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: isMobile ? 10 : 40,
+                            padding: isMobile ? 8 : 10,
+                            font: { size: isMobile ? 11 : 12 }
+                        }
+                    },
                     annotation: {
                         annotations: {
                             reemplazo: {
@@ -1161,19 +1174,37 @@
                                 borderDash: [6, 6],
                                 label: {
                                     display: true,
-                                    content: 'Tasa de reemplazo (2,1)',
+                                    content: isMobile ? 'Reemplazo (2,1)' : 'Tasa de reemplazo (2,1)',
                                     position: 'start',
                                     backgroundColor: 'rgba(234, 179, 8, 0.8)',
-                                    font: { size: 11 }
+                                    font: { size: isMobile ? 9 : 11 }
                                 }
                             }
                         }
                     }
                 },
                 scales: {
-                    y: { title: { display: true, text: 'Nacimientos por 1.000 hab.' }, grid: { color: gridColor } },
-                    y1: { position: 'right', title: { display: true, text: 'Hijos por mujer' }, grid: { drawOnChartArea: false }, min: 0, max: 3.5 },
-                    x: { grid: { color: gridColor } }
+                    y: {
+                        title: { display: !isMobile, text: 'Nacimientos por 1.000 hab.' },
+                        grid: { color: gridColor },
+                        ticks: { font: { size: isMobile ? 10 : 12 } }
+                    },
+                    y1: {
+                        position: 'right',
+                        title: { display: !isMobile, text: 'Hijos por mujer' },
+                        grid: { drawOnChartArea: false },
+                        min: 0, max: 3.5,
+                        ticks: { font: { size: isMobile ? 10 : 12 } }
+                    },
+                    x: {
+                        grid: { color: gridColor },
+                        ticks: {
+                            font: { size: isMobile ? 9 : 12 },
+                            maxRotation: isMobile ? 45 : 0,
+                            autoSkip: true,
+                            maxTicksLimit: isMobile ? 8 : 14
+                        }
+                    }
                 }
             }
         });
@@ -1186,33 +1217,42 @@
             data: {
                 labels: ['1960', '1965', '1970', '1975', '1980', '1985', '1990', '1995', '2000', '2005', '2010', '2015', '2020', '2024'],
                 datasets: [{
-                    label: 'Esperanza de vida (años)',
+                    label: isMobile ? 'Esp. vida (años)' : 'Esperanza de vida (años)',
                     data: [69.1, 71.0, 72.4, 73.5, 75.6, 76.9, 77.0, 78.1, 79.4, 80.3, 82.2, 83.0, 82.4, 84.0],
                     borderColor: '#22c55e',
                     backgroundColor: 'rgba(34, 197, 94, 0.1)',
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    borderWidth: 3
+                    pointRadius: isMobile ? 3 : 5,
+                    pointHoverRadius: isMobile ? 5 : 8,
+                    borderWidth: isMobile ? 2 : 3
                 }, {
-                    label: 'Años de jubilación esperados',
+                    label: isMobile ? 'Años jubilado' : 'Años de jubilación esperados',
                     data: [4.1, 6.0, 7.4, 8.5, 10.6, 11.9, 12.0, 13.1, 14.4, 15.3, 17.2, 18.0, 17.4, 19.0],
                     borderColor: '#a855f7',
                     backgroundColor: 'rgba(168, 85, 247, 0.1)',
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 4,
-                    pointHoverRadius: 7,
+                    pointRadius: isMobile ? 2 : 4,
+                    pointHoverRadius: isMobile ? 4 : 7,
                     borderWidth: 2,
                     yAxisID: 'y1'
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: isMobile ? 1.2 : 2,
                 interaction: { mode: 'index', intersect: false },
                 plugins: {
-                    legend: { position: 'top' },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: isMobile ? 10 : 40,
+                            padding: isMobile ? 8 : 10,
+                            font: { size: isMobile ? 11 : 12 }
+                        }
+                    },
                     annotation: {
                         annotations: {
                             jubilacion: {
@@ -1223,19 +1263,38 @@
                                 borderDash: [6, 6],
                                 label: {
                                     display: true,
-                                    content: 'Edad jubilación (65)',
+                                    content: isMobile ? 'Jubilación (65)' : 'Edad jubilación (65)',
                                     position: 'start',
                                     backgroundColor: 'rgba(249, 115, 22, 0.8)',
-                                    font: { size: 11 }
+                                    font: { size: isMobile ? 9 : 11 }
                                 }
                             }
                         }
                     }
                 },
                 scales: {
-                    y: { min: 60, max: 90, title: { display: true, text: 'Esperanza de vida (años)' }, grid: { color: gridColor } },
-                    y1: { position: 'right', title: { display: true, text: 'Años cobrando pensión' }, grid: { drawOnChartArea: false }, min: 0, max: 25 },
-                    x: { grid: { color: gridColor } }
+                    y: {
+                        min: 60, max: 90,
+                        title: { display: !isMobile, text: 'Esperanza de vida (años)' },
+                        grid: { color: gridColor },
+                        ticks: { font: { size: isMobile ? 10 : 12 } }
+                    },
+                    y1: {
+                        position: 'right',
+                        title: { display: !isMobile, text: 'Años cobrando pensión' },
+                        grid: { drawOnChartArea: false },
+                        min: 0, max: 25,
+                        ticks: { font: { size: isMobile ? 10 : 12 } }
+                    },
+                    x: {
+                        grid: { color: gridColor },
+                        ticks: {
+                            font: { size: isMobile ? 9 : 12 },
+                            maxRotation: isMobile ? 45 : 0,
+                            autoSkip: true,
+                            maxTicksLimit: isMobile ? 8 : 14
+                        }
+                    }
                 }
             }
         });
@@ -1385,36 +1444,63 @@
         new Chart(document.getElementById('chartPensionMedia'), {
             type: 'line',
             data: {
-                labels: ['2005', '2008', '2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024', '2026'],
+                labels: ['2006', '2008', '2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024', '2026'],
                 datasets: [{
-                    label: 'Pensión media jubilación (€/mes)',
-                    data: [724, 814, 884, 946, 1.000, 1.043, 1.091, 1.162, 1.254, 1.440, 1.570],
+                    label: isMobile ? 'Pensión jubilación' : 'Pensión media jubilación (€/mes)',
+                    data: [742, 814, 884, 946, 1002, 1043, 1091, 1162, 1254, 1440, 1570],
                     borderColor: '#a855f7',
                     backgroundColor: 'rgba(168, 85, 247, 0.1)',
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    borderWidth: 3
+                    pointRadius: isMobile ? 3 : 5,
+                    pointHoverRadius: isMobile ? 5 : 8,
+                    borderWidth: isMobile ? 2 : 3
                 }, {
-                    label: 'Salario medio (€/mes)',
-                    data: [1.550, 1.750, 1.800, 1.850, 1.870, 1.900, 1.944, 2.000, 2.086, 2.250, 2.400],
+                    label: isMobile ? 'Salario bruto' : 'Salario medio bruto (€/mes)',
+                    data: [1715, 1835, 1838, 1850, 1869, 1878, 1944, 2018, 2120, 2386, 2500],
                     borderColor: '#06b6d4',
                     backgroundColor: 'rgba(6, 182, 212, 0.05)',
                     fill: false,
                     tension: 0.4,
-                    pointRadius: 4,
+                    pointRadius: isMobile ? 2 : 4,
                     borderWidth: 2,
                     borderDash: [5, 5]
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: isMobile ? 1.3 : 2,
                 interaction: { mode: 'index', intersect: false },
-                plugins: { legend: { position: 'top' } },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: isMobile ? 10 : 40,
+                            font: { size: isMobile ? 11 : 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw.toLocaleString('es-ES') + ' €';
+                            }
+                        }
+                    }
+                },
                 scales: {
-                    y: { title: { display: true, text: '€ / mes' }, grid: { color: gridColor } },
-                    x: { grid: { color: gridColor } }
+                    y: {
+                        title: { display: !isMobile, text: '€ / mes' },
+                        grid: { color: gridColor },
+                        ticks: {
+                            font: { size: isMobile ? 10 : 12 },
+                            callback: function(value) { return value.toLocaleString('es-ES') + '€'; }
+                        }
+                    },
+                    x: {
+                        grid: { color: gridColor },
+                        ticks: { font: { size: isMobile ? 9 : 12 } }
+                    }
                 }
             }
         });
